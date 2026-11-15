@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<title>Shayari Reel Maker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Kalam:wght@400;700&family=Yatra+One&family=Noto+Serif+Devanagari:wght@500;700&display=swap">
+<style>
+:root{--bg:#14110f;--panel:#1e1a17;--ink:#f1e9dc;--mute:#a79c8c;--line:#3a332d;--acc:#e0b15c;--accink:#1a1306;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#f5f1ea;--panel:#fff;--ink:#241d15;--mute:#6f6558;--line:#ddd3c3;--acc:#8a5a00;--accink:#fff;color-scheme:light}}
+:root[data-theme="dark"]{--bg:#14110f;--panel:#1e1a17;--ink:#f1e9dc;--mute:#a79c8c;--line:#3a332d;--acc:#e0b15c;--accink:#1a1306}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Noto Serif Devanagari",Georgia,serif}
+main{max-width:980px;margin:0 auto;padding:20px 16px 40px;display:grid;gap:24px;grid-template-columns:1fr}
+@media(min-width:820px){main{grid-template-columns:1fr 360px;align-items:start}}
+h1{font:700 26px/1.2 "Tiro Devanagari Hindi",serif;margin:0 0 4px}
+p.sub{margin:0 0 18px;color:var(--mute);font-size:14px}
+label{display:block;font-size:13px;color:var(--mute);margin:14px 0 6px}
+textarea,input[type=text],select{width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit}
+textarea{min-height:170px;resize:vertical;font-size:18px;line-height:1.7}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.themes{display:flex;gap:8px;flex-wrap:wrap}
+.themes button{width:56px;height:56px;border-radius:50%;border:2px solid var(--line);cursor:pointer;padding:0}
+.themes button[aria-pressed=true]{border-color:var(--acc);outline:2px solid var(--acc);outline-offset:2px}
+.btns{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+button.b{font:700 16px "Noto Serif Devanagari",serif;border-radius:8px;padding:12px 18px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+button.b.p{background:var(--acc);color:var(--accink);border-color:var(--acc)}
+button.b:disabled{opacity:.5;cursor:wait}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.stage{position:sticky;top:12px}
+canvas{width:auto;height:auto;max-width:100%;max-height:80vh;aspect-ratio:9/16;border-radius:12px;display:block;background:#000;margin:0 auto}
+#status{font-size:14px;color:var(--mute);margin:12px 0 0;min-height:42px}
+#out video{width:100%;max-width:360px;border-radius:12px;display:block;margin:12px auto 0}
+#out a{display:block;text-align:center;margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:8px;color:var(--acc);font-weight:700;text-decoration:none}
+html{-webkit-text-size-adjust:100%}body{overflow-x:hidden}
+input[type=file]{font-size:14px}input[type=range]{height:32px}
+@media(max-width:819px){
+ main{padding:12px 14px 0;gap:14px}
+ .stage{order:-1;position:static}
+ canvas{max-height:52vh}
+ h1{font-size:22px}
+ textarea{min-height:140px}
+ .btns{position:sticky;bottom:0;z-index:5;background:var(--bg);margin:16px -14px 0;padding:10px 14px;border-top:1px solid var(--line);flex-wrap:nowrap}
+ .btns .b{flex:1;padding:14px 10px}
+}
+@media(max-width:400px){.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<section>
+<h1>Shayari Reel Maker</h1>
+<p class="sub">Shayari paste karo, video banao, seedha Instagram par upload karo.</p>
+<label for="txt">Shayari (har line alag likho)</label>
+<textarea id="txt">तेरी यादों का सिलसिला कुछ यूँ चलता है,
+हर रात चाँद भी मेरे साथ जलता है।
+मैंने तो बस तुझे चाहा था दिल से,
+और ये दिल आज भी तेरे नाम से धड़कता है।</textarea>
+<label for="who">Page ka naam (neeche dikhega)</label>
+<input type="text" id="who" value="@your_page">
+<div class="row">
+<div><label for="font">Font</label>
+<select id="font"><option value="Tiro Devanagari Hindi">Tiro (classic)</option><option value="Kalam">Kalam (haath ka likha)</option><option value="Yatra One">Yatra (bold)</option><option value="Noto Serif Devanagari">Noto Serif</option></select></div>
+<div><label for="spd">Speed (har line)</label>
+<select id="spd"><option value="1.1">Tez</option><option value="1.6" selected>Normal</option><option value="2.2">Dheema</option></select></div>
+</div>
+<label for="fs">Font size: <b id="fsv">Auto</b></label>
+<div class="row"><input type="range" id="fs" min="30" max="90" value="56" style="width:100%"><label style="margin:0;display:flex;gap:8px;align-items:center"><input type="checkbox" id="auto" checked> Auto fit</label></div>
+<label for="wy">Page naam ki position (upar &harr; niche): <b id="wyv">91</b>%</label>
+<input type="range" id="wy" min="5" max="95" value="91" style="width:100%">
+<label for="wc">Page naam ka color</label>
+<div class="row"><input type="color" id="wc" value="#e0b15c" style="width:100%;height:44px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:3px"><button class="b" id="wcr" type="button">Theme wala color</button></div>
+<label>Theme</label>
+<div class="themes" id="themes"></div>
+<label for="bgi">Background image (optional)</label>
+<input type="file" id="bgi" accept="image/*">
+<label for="ov">Image par andhera (text padhne ke liye): <b id="ovv">45</b>%</label>
+<input type="range" id="ov" min="0" max="90" value="45" style="width:100%">
+<label for="mus">Music (optional, mp3/m4a)</label>
+<input type="file" id="mus" accept="audio/*">
+<div class="btns">
+<button class="b" id="prev">Preview dekho</button>
+<button class="b p" id="make">Video banao</button>
+</div>
+
+</section>
+<aside class="stage">
+<canvas id="cv" width="720" height="1280"></canvas>
+<p id="status" role="status"></p>
+<div id="out"></div>
+</aside>
+</main>
+<script>
+const W=720,H=1280,cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+const $=id=>document.getElementById(id);
+const THEMES=[
+ {n:'Kaala',g:['#000000','#000000'],t:'#ffffff',a:'#e0b15c',pure:1},
+ {n:'Raat',g:['#0b1030','#1d2a5c'],t:'#f4efe3',a:'#f2d88a'},
+ {n:'Gulab',g:['#3a0f2a','#b04a6a'],t:'#fff3ea',a:'#ffd2b8'},
+ {n:'Siyahi',g:['#050505','#1f1a10'],t:'#f6ecd2',a:'#d9a93f'},
+ {n:'Jungle',g:['#071c17','#1f5a45'],t:'#eef7ee',a:'#b7e4a6'},
+ {n:'Sham',g:['#2a0d0d','#c2602b'],t:'#fff4e0',a:'#ffd08a'}
+];
+let th=0,layout=null,audioBuf=null,running=false,bgImg=null,wcSet=false;
+const stars=Array.from({length:70},(_,i)=>{const r=s=>{const x=Math.sin(i*97.13+s*13.7)*43758.5453;return x-Math.floor(x)};return{x:r(1)*W,y:r(2)*H*.8,s:r(3)*2+.6,p:r(4)*6}});
+THEMES.forEach((o,i)=>{const b=document.createElement('button');b.style.background=`linear-gradient(160deg,${o.g[0]},${o.g[1]})`;b.title=o.n;b.setAttribute('aria-label',o.n);b.setAttribute('aria-pressed',i==0);b.onclick=()=>{th=i;if(!wcSet)$('wc').value=THEMES[i].a;[...$('themes').children].forEach((c,j)=>c.setAttribute('aria-pressed',j==i));build();draw(99)};$('themes').appendChild(b)});
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+function wrap(text,maxW){const words=text.split(/\s+/),out=[];let cur='';for(const w of words){const test=cur?cur+' '+w:w;if(ctx.measureText(test).width>maxW&&cur){out.push(cur);cur=w}else cur=test}if(cur)out.push(cur);return out}
+function build(){
+ const f=$('font').value,units=$('txt').value.split('\n').map(s=>s.trim()).filter(Boolean),step=parseFloat($('spd').value);
+ const fixed=!$('auto').checked;let size=fixed?+$('fs').value:64,wrapped,lh,total;
+ for(;size>26;size-=2){ctx.font=`${size}px "${f}",serif`;wrapped=units.map(u=>wrap(u,W*.8));lh=size*1.55;total=wrapped.reduce((a,w)=>a+w.length*lh,0)+(units.length-1)*size*.5;if(fixed||total<H*.58)break}
+ layout={f,size,wrapped,lh,total,step,start:units.map((_,i)=>.8+i*step),dur:Math.max(8,.8+units.length*step+3.2)};
+}
+function draw(t){
+ const L=layout,T=THEMES[th],p=clamp(t/L.dur,0,1);
+ ctx.save();ctx.translate(W/2,H/2);const z=1+.05*p;ctx.scale(z,z);ctx.translate(-W/2,-H/2);
+ const g=ctx.createLinearGradient(0,0,W*.4,H);g.addColorStop(0,T.g[0]);g.addColorStop(1,T.g[1]);ctx.fillStyle=g;ctx.fillRect(-40,-40,W+80,H+80);
+ if(bgImg){const r=Math.max(W/bgImg.width,H/bgImg.height),w=bgImg.width*r,h=bgImg.height*r;ctx.drawImage(bgImg,(W-w)/2,(H-h)/2,w,h);ctx.fillStyle='rgba(0,0,0,'+$('ov').value/100+')';ctx.fillRect(-40,-40,W+80,H+80)}
+ if(!T.pure&&!bgImg)for(const s of stars){ctx.globalAlpha=.25+.55*Math.abs(Math.sin(t*.9+s.p));ctx.fillStyle=T.t;ctx.beginPath();ctx.arc(s.x,s.y,s.s,0,7);ctx.fill()}
+ ctx.globalAlpha=1;
+ if(!T.pure&&!bgImg){const rg=ctx.createRadialGradient(W*.78,H*.14,4,W*.78,H*.14,180);rg.addColorStop(0,T.a);rg.addColorStop(.18,T.a+'cc');rg.addColorStop(1,'transparent');ctx.fillStyle=rg;ctx.fillRect(0,0,W,H*.4);}
+ ctx.restore();
+ if(!T.pure&&!bgImg){const v=ctx.createRadialGradient(W/2,H/2,H*.25,W/2,H/2,H*.75);v.addColorStop(0,'transparent');v.addColorStop(1,'rgba(0,0,0,.45)');ctx.fillStyle=v;ctx.fillRect(0,0,W,H);}
+ ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`${L.size}px "${L.f}",serif`;
+ let y=(H-L.total)/2+L.lh/2;
+ L.wrapped.forEach((lines,i)=>{
+  const a=clamp((t-L.start[i])/.9,0,1);
+  lines.forEach(s=>{ctx.globalAlpha=a;ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=14;ctx.fillStyle=T.t;ctx.fillText(s,W/2,y+(1-a)*22);y+=L.lh});
+  y+=L.size*.5;
+ });
+ ctx.shadowBlur=0;
+ const ha=clamp((t-(L.start[L.start.length-1]+1.2))/.9,0,1);
+ ctx.globalAlpha=ha;ctx.fillStyle=wcSet?$('wc').value:T.a;ctx.font='500 30px "Noto Serif Devanagari",serif';ctx.fillText($('who').value,W/2,H*$('wy').value/100);
+ ctx.globalAlpha=1;
+}
+async function ready(){const f=$('font').value;await Promise.all([document.fonts.load(`40px "${f}"`,'अआक'),document.fonts.load('500 30px "Noto Serif Devanagari"','अ')]).catch(()=>{});build()}
+async function run(rec){
+ if(running)return;running=true;$('make').disabled=$('prev').disabled=true;$('out').innerHTML='';
+ await ready();
+ let recorder,chunks=[],mime='',ac,src;
+ if(rec){
+  const stream=cv.captureStream(30);
+  if(audioBuf){try{ac=new AudioContext();const dest=ac.createMediaStreamDestination();src=ac.createBufferSource();src.buffer=await ac.decodeAudioData(audioBuf.slice(0));const gn=ac.createGain();gn.gain.setValueAtTime(1,ac.currentTime+layout.dur-1.5);gn.gain.linearRampToValueAtTime(0,ac.currentTime+layout.dur);src.connect(gn);gn.connect(dest);stream.addTrack(dest.stream.getAudioTracks()[0]);src.start()}catch(e){$('status').textContent='Music load nahi hua, bina music ke bana raha hoon.'}}
+  mime=['video/mp4;codecs=avc1','video/mp4','video/webm;codecs=vp9','video/webm'].find(m=>MediaRecorder.isTypeSupported(m))||'';
+  recorder=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:6e6}:{videoBitsPerSecond:6e6});
+  recorder.ondataavailable=e=>e.data.size&&chunks.push(e.data);
+  recorder.onstop=()=>{
+   const type=recorder.mimeType||'video/webm',ext=type.includes('mp4')?'mp4':'webm',url=URL.createObjectURL(new Blob(chunks,{type})),blob=new Blob(chunks,{type});
+   $('out').innerHTML=`<video src="${url}" controls playsinline></video><a class="b" download="shayari-reel.${ext}" href="${url}">Video download karo (.${ext})</a><button class="b p" id="shr" type="button" style="width:100%;margin-top:10px">Instagram par share karo</button>`;$('shr').onclick=()=>shareVid(blob,ext);
+   $('status').textContent=ext==='mp4'?'Video taiyaar hai. Download karke Instagram par upload karo.':'Video .webm me bana hai. Instagram ke liye mp4 chahiye, Chrome (laptop) me banao ya kisi free converter se mp4 kar lo.';
+   if(ac)ac.close();finish()};
+  recorder.start();
+ }
+ $('status').textContent=rec?'Video ban raha hai... is tab ko khula rakho.':'';
+ const t0=performance.now();
+ (function f(now){const t=(now-t0)/1000;draw(Math.min(t,layout.dur));if(t<layout.dur)requestAnimationFrame(f);else if(rec)setTimeout(()=>recorder.stop(),200);else finish()})(t0);
+}
+async function shareVid(blob,ext){
+ const type=ext==='mp4'?'video/mp4':'video/webm',file=new File([blob],'shayari-reel.'+ext,{type});
+ try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'Shayari Reel'});return}}catch(e){if(e.name==='AbortError')return}
+ $('status').textContent='Is device me direct share nahi chal raha. Video download karo, phir Instagram me + > Reel se upload karo.';
+}
+function finish(){running=false;$('make').disabled=$('prev').disabled=false}
+$('bgi').onchange=e=>{const f=e.target.files[0];if(!f){bgImg=null;draw(99);return}const im=new Image();im.onload=()=>{bgImg=im;draw(99)};im.src=URL.createObjectURL(f)};
+$('wcr').onclick=()=>{wcSet=false;$('wc').value=THEMES[th].a;draw(99)};
+$('prev').onclick=()=>run(false);$('make').onclick=()=>run(true);
+$('mus').onchange=async e=>{const f=e.target.files[0];audioBuf=f?await f.arrayBuffer():null};
+['txt','who','font','spd','fs','auto','wy','ov','wc'].forEach(id=>$(id).addEventListener('input',e=>{if(e.target.id==='wc')wcSet=true;if(e.target.id==='fs')$('auto').checked=false;$('wyv').textContent=$('wy').value;$('ovv').textContent=$('ov').value;$('fsv').textContent=$('auto').checked?'Auto':$('fs').value;if(!running){ready().then(()=>draw(99))}}));
+ready().then(()=>draw(99));
+</script>
+</body>
+</html>
