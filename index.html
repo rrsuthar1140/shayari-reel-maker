@@ -52,23 +52,33 @@ input[type=file]{font-size:14px}input[type=range]{height:32px}
 <section>
 <h1>Shayari Reel Maker</h1>
 <p class="sub">Shayari paste karo, video banao, seedha Instagram par upload karo.</p>
+<label for="mood">Shayari ka mood</label>
+<div class="row"><select id="mood"><option value="pyaar">Pyaar</option><option value="judai">Judai / dard</option><option value="dosti">Dosti</option><option value="zindagi">Zindagi</option><option value="himmat">Himmat / motivation</option></select><button class="b p" id="gen" type="button">Nayi shayari (refresh)</button></div>
+<label style="margin:8px 0 0;display:flex;gap:8px;align-items:center"><input type="checkbox" id="useai" checked> AI se likhwao (internet chahiye, na chale to apni shayari aayegi)</label>
 <label for="txt">Shayari (har line alag likho)</label>
 <textarea id="txt">तेरी यादों का सिलसिला कुछ यूँ चलता है,
 हर रात चाँद भी मेरे साथ जलता है।
 मैंने तो बस तुझे चाहा था दिल से,
 और ये दिल आज भी तेरे नाम से धड़कता है।</textarea>
 <label for="who">Page ka naam (neeche dikhega)</label>
-<input type="text" id="who" value="@your_page">
+<input type="text" id="who" value="@itz__writer">
+<div class="row"><div><label for="ser">Series ka naam</label><input type="text" id="ser" value="Khamoshi ki baatein"></div><div><label for="part">Part number</label><input type="number" id="part" min="1" value="1" inputmode="numeric" style="width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit"></div></div>
+<label for="ctap">Follow line ka tarika</label>
+<select id="ctap"><option value="">Apni likho (neeche)</option><option value="रोज़ ऐसी शायरी के लिए फ़ॉलो करो">Roz shayari ke liye follow</option><option value="अगला पार्ट जल्द आएगा, फ़ॉलो करो">Agla part aayega, follow karo</option><option value="जिसके लिए ये लाइन है उसे भेजो, फ़ॉलो करो">Kisi ko bhejo + follow</option></select>
+<label for="cta">Video ke end me follow wali line</label>
+<input type="text" id="cta" value="रोज़ ऐसी शायरी के लिए फ़ॉलो करो">
 <div class="row">
 <div><label for="font">Font</label>
 <select id="font"><option value="Tiro Devanagari Hindi">Tiro (classic)</option><option value="Kalam">Kalam (haath ka likha)</option><option value="Yatra One">Yatra (bold)</option><option value="Noto Serif Devanagari">Noto Serif</option></select></div>
 <div><label for="spd">Speed (har line)</label>
 <select id="spd"><option value="1.1">Tez</option><option value="1.6" selected>Normal</option><option value="2.2">Dheema</option></select></div>
 </div>
-<label for="fs">Font size: <b id="fsv">Auto</b></label>
-<div class="row"><input type="range" id="fs" min="30" max="90" value="56" style="width:100%"><label style="margin:0;display:flex;gap:8px;align-items:center"><input type="checkbox" id="auto" checked> Auto fit</label></div>
-<label for="wy">Page naam ki position (upar &harr; niche): <b id="wyv">91</b>%</label>
-<input type="range" id="wy" min="5" max="95" value="91" style="width:100%">
+<label for="fx">Text effect</label>
+<select id="fx"><option value="fade">Fade (halka aana)</option><option value="type">Typing (akshar-akshar, cursor ke saath)</option><option value="word">Word by word</option></select>
+<label for="fs">Font size: <b id="fsv">30</b></label>
+<div class="row"><input type="range" id="fs" min="30" max="90" value="30" style="width:100%"><label style="margin:0;display:flex;gap:8px;align-items:center"><input type="checkbox" id="auto"> Auto fit</label></div>
+<label for="wy">Page naam ki position (upar &harr; niche): <b id="wyv">76</b>%</label>
+<input type="range" id="wy" min="5" max="95" value="76" style="width:100%">
 <label for="wc">Page naam ka color</label>
 <div class="row"><input type="color" id="wc" value="#e0b15c" style="width:100%;height:44px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:3px"><button class="b" id="wcr" type="button">Theme wala color</button></div>
 <label>Theme</label>
@@ -79,6 +89,10 @@ input[type=file]{font-size:14px}input[type=range]{height:32px}
 <input type="range" id="ov" min="0" max="90" value="45" style="width:100%">
 <label for="mus">Music (optional, mp3/m4a)</label>
 <input type="file" id="mus" accept="audio/*">
+<label for="capout">Caption + hashtags (Instagram post ke liye)</label>
+<textarea id="capout" style="min-height:130px;font-size:16px" placeholder="Yahan caption aur hashtags aayenge"></textarea>
+<div class="row" style="margin-top:10px"><button class="b p" id="cap" type="button">Caption + hashtags banao</button><button class="b" id="cpy" type="button">Copy karo</button></div>
+<p class="sub" style="margin-top:10px">Tumhare insights ke hisaab se post karne ka best time: raat 8:30-9 baje ya subah 5:30-6 baje. Dopahar 12-3 baje avoid karo.</p>
 <div class="btns">
 <button class="b" id="prev">Preview dekho</button>
 <button class="b p" id="make">Video banao</button>
@@ -107,11 +121,14 @@ const stars=Array.from({length:70},(_,i)=>{const r=s=>{const x=Math.sin(i*97.13+
 THEMES.forEach((o,i)=>{const b=document.createElement('button');b.style.background=`linear-gradient(160deg,${o.g[0]},${o.g[1]})`;b.title=o.n;b.setAttribute('aria-label',o.n);b.setAttribute('aria-pressed',i==0);b.onclick=()=>{th=i;if(!wcSet)$('wc').value=THEMES[i].a;[...$('themes').children].forEach((c,j)=>c.setAttribute('aria-pressed',j==i));build();draw(99)};$('themes').appendChild(b)});
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 function wrap(text,maxW){const words=text.split(/\s+/),out=[];let cur='';for(const w of words){const test=cur?cur+' '+w:w;if(ctx.measureText(test).width>maxW&&cur){out.push(cur);cur=w}else cur=test}if(cur)out.push(cur);return out}
+const SEG=window.Intl&&Intl.Segmenter?new Intl.Segmenter('hi',{granularity:'grapheme'}):null;
+const toks=(l,fx)=>fx==='word'?l.split(' '):(SEG?[...SEG.segment(l)].map(x=>x.segment):Array.from(l));
 function build(){
  const f=$('font').value,units=$('txt').value.split('\n').map(s=>s.trim()).filter(Boolean),step=parseFloat($('spd').value);
  const fixed=!$('auto').checked;let size=fixed?+$('fs').value:64,wrapped,lh,total;
  for(;size>26;size-=2){ctx.font=`${size}px "${f}",serif`;wrapped=units.map(u=>wrap(u,W*.8));lh=size*1.55;total=wrapped.reduce((a,w)=>a+w.length*lh,0)+(units.length-1)*size*.5;if(fixed||total<H*.58)break}
- layout={f,size,wrapped,lh,total,step,start:units.map((_,i)=>.8+i*step),dur:Math.max(8,.8+units.length*step+3.2)};
+ const fx=$('fx').value;
+ layout={f,size,wrapped,lh,total,step,fx,tok:wrapped.map(ls=>ls.map(l=>toks(l,fx))),udur:wrapped.map(ls=>{const n=ls.reduce((q,l)=>q+toks(l,fx).length,0);return fx==='fade'?.9:fx==='type'?clamp(n*.06,.6,step*.9):clamp(n*.3,.6,step*.9)}),start:units.map((_,i)=>.8+i*step),dur:Math.max(8,.8+units.length*step+3.2)};
 }
 function draw(t){
  const L=layout,T=THEMES[th],p=clamp(t/L.dur,0,1);
@@ -124,15 +141,23 @@ function draw(t){
  ctx.restore();
  if(!T.pure&&!bgImg){const v=ctx.createRadialGradient(W/2,H/2,H*.25,W/2,H/2,H*.75);v.addColorStop(0,'transparent');v.addColorStop(1,'rgba(0,0,0,.45)');ctx.fillStyle=v;ctx.fillRect(0,0,W,H);}
  ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`${L.size}px "${L.f}",serif`;
- let y=(H-L.total)/2+L.lh/2;
+ let y=(H*.92-L.total)/2+L.lh/2;
  L.wrapped.forEach((lines,i)=>{
   const a=clamp((t-L.start[i])/.9,0,1);
-  lines.forEach(s=>{ctx.globalAlpha=a;ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=14;ctx.fillStyle=T.t;ctx.fillText(s,W/2,y+(1-a)*22);y+=L.lh});
+  if(L.fx==='fade'){lines.forEach(s=>{ctx.globalAlpha=a;ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=14;ctx.fillStyle=T.t;ctx.fillText(s,W/2,y+(1-a)*22);y+=L.lh})}
+  else{const tk=L.tok[i],tot=tk.reduce((q,w)=>q+w.length,0),p2=clamp((t-L.start[i])/L.udur[i],0,1);let left=Math.ceil(p2*tot);
+   ctx.textAlign='left';ctx.globalAlpha=1;ctx.shadowColor='rgba(0,0,0,.6)';ctx.shadowBlur=14;ctx.fillStyle=T.t;
+   lines.forEach((s,k)=>{const m=Math.min(left,tk[k].length);left-=m;const x0=(W-ctx.measureText(s).width)/2;
+    if(m>0){const part=tk[k].slice(0,m).join(L.fx==='word'?' ':'');ctx.fillText(part,x0,y);
+     if(p2<1&&left===0&&Math.floor(t*2.5)%2===0){ctx.shadowBlur=0;ctx.fillRect(x0+ctx.measureText(part).width+5,y-L.size*.42,3,L.size*.84);ctx.shadowBlur=14}}
+    y+=L.lh});ctx.textAlign='center'}
   y+=L.size*.5;
  });
  ctx.shadowBlur=0;
- const ha=clamp((t-(L.start[L.start.length-1]+1.2))/.9,0,1);
+ if($('ser').value){ctx.globalAlpha=clamp(t/.6,0,1);ctx.font='500 28px "Noto Serif Devanagari",serif';ctx.fillStyle=T.a;ctx.textAlign='center';ctx.fillText($('ser').value+' #'+$('part').value,W/2,H*.13)}
+ const ha=clamp((t-(L.start[L.start.length-1]+L.udur[L.udur.length-1]+.3))/.9,0,1);
  ctx.globalAlpha=ha;ctx.fillStyle=wcSet?$('wc').value:T.a;ctx.font='500 30px "Noto Serif Devanagari",serif';ctx.fillText($('who').value,W/2,H*$('wy').value/100);
+ if($('cta').value){ctx.font='400 26px "Noto Serif Devanagari",serif';ctx.fillStyle=T.t;ctx.globalAlpha=ha*.85;ctx.fillText($('cta').value,W/2,H*$('wy').value/100+44)}
  ctx.globalAlpha=1;
 }
 async function ready(){const f=$('font').value;await Promise.all([document.fonts.load(`40px "${f}"`,'अआक'),document.fonts.load('500 30px "Noto Serif Devanagari"','अ')]).catch(()=>{});build()}
@@ -164,10 +189,64 @@ async function shareVid(blob,ext){
 }
 function finish(){running=false;$('make').disabled=$('prev').disabled=false}
 $('bgi').onchange=e=>{const f=e.target.files[0];if(!f){bgImg=null;draw(99);return}const im=new Image();im.onload=()=>{bgImg=im;draw(99)};im.src=URL.createObjectURL(f)};
+const BANK={
+pyaar:[["तेरी आँखों में जो ठहरा है सुकून,","वो किसी मंदिर की चौखट पर भी नहीं मिलता।","तू मिल जाए तो हर दुआ पूरी लगती है,","तेरे बिना ये दिल कहीं नहीं लगता।"],["तुझे देखा तो लगा वक़्त ठहर गया,","धड़कनों ने तेरा नाम गुनगुनाया।","मैंने चाँद से कुछ नहीं माँगा कभी,","बस तेरा साथ ही हर रात माँग लाया।"],["बातें तो बहुत हैं तुझसे कहने को,","पर तुझे देखकर लफ़्ज़ खो जाते हैं।","तेरी एक मुस्कान की ख़ातिर,","हम हर ग़म में भी हँस जाते हैं।"]],
+judai:[["वो चला गया तो शिकवा नहीं किया,","बस दिल में एक ख़ामोशी रह गई।","अब भी तेरे नाम की चाय ठंडी होती है,","और एक कुर्सी हमेशा ख़ाली रह गई।"],["तेरी यादों से कह दो थोड़ा ठहर जाएँ,","रात बहुत लंबी है, कुछ देर और रुक जाएँ।","तू नहीं तो ना सही, तेरा ख़्याल ही सही,","इसी बहाने ये आँखें थोड़ी भर आएँ।"],["मोहब्बत थी, इसलिए ख़ामोश रहे,","वरना हक़ जताना हमें भी आता था।","तू ख़ुश रहे बस यही दुआ है,","रूठना-मनाना हमें भी आता था।"]],
+dosti:[["दोस्त वो नहीं जो हर पल साथ रहे,","दोस्त वो है जो बिन कहे समझ जाए।","जब दुनिया पीठ दिखाकर चल पड़े,","वो हाथ थामकर साथ खड़ा नज़र आए।"],["यारों की महफ़िल में वक़्त का पता नहीं चलता,","हँसी में ग़म भी कहीं खो जाता है।","दौलत तो बहुत कमा ली दुनिया ने,","पर सच्चा यार किस्मत से मिल पाता है।"],["तेरी दोस्ती मेरी सबसे बड़ी दौलत है,","इसमें न कोई सौदा, न हिसाब है।","तू साथ है तो हर मुश्किल आसान है,","तू ही मेरी हर दुआ का जवाब है।"]],
+zindagi:[["ज़िंदगी हर मोड़ पर कुछ सिखा जाती है,","कभी हँसाती है तो कभी रुला जाती है।","जो गिरकर भी हर बार उठ खड़ा होता है,","मंज़िल उसी को गले लगा जाती है।"],["वक़्त के साथ सब बदल जाता है,","लोग भी, रिश्ते भी, हालात भी।","पर जो दिल से निभाए सच्चाई से,","वही रह जाता है हर बात में भी।"],["भागते-भागते हम ख़ुद से दूर हो गए,","थोड़ा सुकून भी ज़रूरी है ज़िंदगी में।","कभी रुककर ख़ुद से भी मिल लिया करो,","वरना खो जाओगे इसी भीड़ में।"]],
+himmat:[["हार को भी हँसकर गले लगाना सीख,","ठोकरों से ही चलना आता है।","जो तूफ़ानों से डरकर रुक जाए,","वो कभी मंज़िल नहीं पाता है।"],["रास्ते मुश्किल हैं तो क्या हुआ,","हौसले भी तो कम नहीं हमारे।","एक दिन वक़्त भी झुक जाएगा,","जब चमकेंगे मेहनत के सितारे।"],["डर के आगे जो चल पड़ा,","वही तो सिकंदर कहलाया है।","गिरना कोई हार नहीं होती,","उठने वाले ने ही इतिहास बनाया है।"]]};
+const MOODN={pyaar:'pyaar (love)',judai:'judai aur dard (heartbreak)',dosti:'dosti (friendship)',zindagi:'zindagi (life)',himmat:'himmat aur motivation'};
+let lastIdx=-1;
+async function aiShayari(m){
+ const p='Hindi (Devanagari script) me '+MOODN[m]+' par ek nayi original shayari likho: 4 chhoti lines, har line alag line me. Sirf shayari do, koi title, numbering ya explanation nahi. Variation '+Math.random();
+ const ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),12000);
+ try{const r=await fetch('https://text.pollinations.ai/'+encodeURIComponent(p)+'?model=openai&seed='+Date.now(),{signal:ctl.signal});if(!r.ok)throw 0;
+  const lines=(await r.text()).split('\n').map(s=>s.replace(/[*#>"\u201c\u201d]|^\s*[-\d.)]+\s+/g,'').trim()).filter(s=>s&&!/pollinations/i.test(s));
+  if(lines.length<2||!/[\u0900-\u097F]/.test(lines.join('')))throw 0;
+  return lines.slice(0,6).join('\n')}finally{clearTimeout(to)}
+}
+$('gen').onclick=async()=>{
+ const m=$('mood').value,b=$('gen');b.disabled=true;let t='',ai=false;
+ if($('useai').checked){$('status').textContent='AI shayari likh raha hai...';try{t=await aiShayari(m);ai=true}catch(e){}}
+ if(!t){const a=BANK[m];let i;do{i=Math.floor(Math.random()*a.length)}while(a.length>1&&i===lastIdx);lastIdx=i;t=a[i].join('\n')}
+ $('txt').value=t;$('txt').dispatchEvent(new Event('input'));
+ $('status').textContent=ai?'AI ne nayi shayari likhi. Pasand na aaye to refresh dabao.':($('useai').checked?'AI nahi mila, tool ki apni shayari daali. Refresh dabao to doosri aayegi.':'Nayi shayari aa gayi. Refresh dabao to doosri aayegi.');
+ b.disabled=false;
+};
+const TAGS={base:'#shayari #hindishayari #urdupoetry #poetry #reels #reelsinstagram #trendingreels #viralreels #explorepage #shayarilover',
+pyaar:'#love #lovepoetry #pyaar #mohabbat #romanticshayari #loveshayari',
+judai:'#sadshayari #dardbhari #judai #brokenheart #heartbreakshayari #yaadein',
+dosti:'#dosti #friendship #yaari #dostishayari #friendshipgoals #bestfriends',
+zindagi:'#zindagi #lifequotes #hindiquotes #motivationalshayari #lifelessons #thoughts',
+himmat:'#motivation #himmat #hauslashayari #success #inspiration #mindset'};
+const CAPS={pyaar:['Jo kehna tha, shayari ne keh diya.','Mohabbat lafzon me kahan sama paati hai...','Tag karo us insaan ko jiske liye ye dil dhadakta hai.'],
+judai:['Kuch baatein khamoshi hi samajh leti hai.','Yaadein jaati nahi, bas chup ho jaati hain.','Jisne ise mehsoos kiya, wo ye samjhega.'],
+dosti:['Aise yaar kismat se milte hain.','Apne us dost ko tag karo jo sab kuch samajhta hai.','Dosti ka koi hisaab nahi hota.'],
+zindagi:['Zindagi har mod par kuch sikha jaati hai.','Thoda ruko, khud se bhi mil lo.','Jo sach laga, wahi likh diya.'],
+himmat:['Girna haar nahi hai, uthna asli jeet hai.','Hausla rakho, raaste khud ban jayenge.','Ye line un sabke liye jo haar nahi maante.']};
+async function aiCaption(txt){
+ const p='Neeche di gayi Hindi shayari ke liye Instagram reel caption aur hashtags likho. Format: pehli line me ek relatable sawal jo shayari ke ehsaas se juda ho (Hinglish, max 15 words), phir ek line me comment karne ki request (jaise "haan" likho ya kisi ko tag karo), phir ek line me follow karne ki request jisme @itz__writer ka naam ho, phir ek khali line, phir sirf 5 relevant hashtags ek hi line me (3 niche, 2 broad). Koi explanation ya title nahi.\n\nShayari:\n'+txt;
+ const ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),12000);
+ try{const r=await fetch('https://text.pollinations.ai/'+encodeURIComponent(p)+'?model=openai&seed='+Date.now(),{signal:ctl.signal});if(!r.ok)throw 0;
+  const t=(await r.text()).split('\n').filter(s=>!/pollinations/i.test(s)).join('\n').replace(/\*\*/g,'').trim();
+  if(!/#\S/.test(t)||t.length>900)throw 0;return t}finally{clearTimeout(to)}
+}
+$('cap').onclick=async()=>{
+ const b=$('cap'),m=$('mood').value,txt=$('txt').value.trim();if(!txt){$('status').textContent='Pehle shayari likho ya generate karo.';return}
+ b.disabled=true;let out='',ai=false;
+ if($('useai').checked){$('status').textContent='AI caption aur hashtags bana raha hai...';try{out=await aiCaption(txt);ai=true}catch(e){}}
+ if(!out){const c=CAPS[m];out=c[Math.floor(Math.random()*c.length)]+'\nYe line tumhari kahani lagi to comment me "haan" likho.\nRoz nayi shayari ke liye '+$('who').value+' ko follow karo.\n\n#hindishayari #shayari '+TAGS[m].split(' ').slice(0,3).join(' ')}
+ out+='\n\n--- Pinned comment (post ke baad pehla comment karke pin karo) ---\nAgla part ('+$('ser').value+' #'+(+$('part').value+1)+') jaldi aayega. Miss na ho isliye '+$('who').value+' ko follow karo';
+ $('capout').value=out;
+ $('status').textContent=ai?'AI ne caption aur hashtags bana diye. Dobara dabao to naye aayenge.':'Tool ke apne caption aur hashtags daale hain. Dobara dabao to doosra caption aayega.';
+ b.disabled=false;
+};
+$('cpy').onclick=async()=>{const t=$('capout').value;if(!t)return;try{await navigator.clipboard.writeText(t)}catch(e){$('capout').select();document.execCommand('copy')}const b=$('cpy');b.textContent='Copy ho gaya';setTimeout(()=>b.textContent='Copy karo',1500)};
+$('ctap').onchange=()=>{if($('ctap').value){$('cta').value=$('ctap').value;if(layout)draw(99)}};
 $('wcr').onclick=()=>{wcSet=false;$('wc').value=THEMES[th].a;draw(99)};
 $('prev').onclick=()=>run(false);$('make').onclick=()=>run(true);
 $('mus').onchange=async e=>{const f=e.target.files[0];audioBuf=f?await f.arrayBuffer():null};
-['txt','who','font','spd','fs','auto','wy','ov','wc'].forEach(id=>$(id).addEventListener('input',e=>{if(e.target.id==='wc')wcSet=true;if(e.target.id==='fs')$('auto').checked=false;$('wyv').textContent=$('wy').value;$('ovv').textContent=$('ov').value;$('fsv').textContent=$('auto').checked?'Auto':$('fs').value;if(!running){ready().then(()=>draw(99))}}));
+['txt','who','font','spd','fs','auto','wy','ov','wc','fx','cta','ser','part'].forEach(id=>$(id).addEventListener('input',e=>{if(e.target.id==='wc')wcSet=true;if(e.target.id==='fx'&&!running){run(false);return}if(e.target.id==='fs')$('auto').checked=false;$('wyv').textContent=$('wy').value;$('ovv').textContent=$('ov').value;$('fsv').textContent=$('auto').checked?'Auto':$('fs').value;if(!running){ready().then(()=>draw(99))}}));
 ready().then(()=>draw(99));
 </script>
 </body>
