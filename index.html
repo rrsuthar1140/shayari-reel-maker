@@ -53,13 +53,12 @@ input[type=file]{font-size:14px}input[type=range]{height:32px}
 <h1>Shayari Reel Maker</h1>
 <p class="sub">Shayari paste karo, video banao, seedha Instagram par upload karo.</p>
 <label for="mood">Shayari ka mood</label>
-<div class="row"><select id="mood"><option value="pyaar">Pyaar</option><option value="judai">Judai / dard</option><option value="dosti">Dosti</option><option value="zindagi">Zindagi</option><option value="himmat">Himmat / motivation</option></select><button class="b p" id="gen" type="button">Nayi shayari (refresh)</button></div>
+<div class="row"><select id="mood"><option value="pyaar">Pyaar</option><option value="judai">Judai / dard</option><option value="dosti">Dosti</option><option value="zindagi">Zindagi</option><option value="himmat">Himmat / motivation</option><option value="attitude">Attitude</option></select><button class="b p" id="gen" type="button">Nayi shayari (refresh)</button></div>
+<label for="nl">Shayari kitni lines ki</label>
+<select id="nl"><option value="2">2 lines</option><option value="3">3 lines</option><option value="4" selected>4 lines</option><option value="6">6 lines</option><option value="8">8 lines</option></select>
 <label style="margin:8px 0 0;display:flex;gap:8px;align-items:center"><input type="checkbox" id="useai" checked> AI se likhwao (internet chahiye, na chale to apni shayari aayegi)</label>
 <label for="txt">Shayari (har line alag likho)</label>
-<textarea id="txt">तेरी यादों का सिलसिला कुछ यूँ चलता है,
-हर रात चाँद भी मेरे साथ जलता है।
-मैंने तो बस तुझे चाहा था दिल से,
-और ये दिल आज भी तेरे नाम से धड़कता है।</textarea>
+<textarea id="txt" placeholder="Apni shayari yahan likho, ya upar se Nayi shayari dabao"></textarea>
 <label for="who">Page ka naam (neeche dikhega)</label>
 <input type="text" id="who" value="@itz__writer">
 <div class="row"><div><label for="ser">Series ka naam</label><input type="text" id="ser" value="Khamoshi ki baatein"></div><div><label for="part">Part number</label><input type="number" id="part" min="1" value="1" inputmode="numeric" style="width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit"></div></div>
@@ -140,6 +139,7 @@ function draw(t){
  if(!T.pure&&!bgImg){const rg=ctx.createRadialGradient(W*.78,H*.14,4,W*.78,H*.14,180);rg.addColorStop(0,T.a);rg.addColorStop(.18,T.a+'cc');rg.addColorStop(1,'transparent');ctx.fillStyle=rg;ctx.fillRect(0,0,W,H*.4);}
  ctx.restore();
  if(!T.pure&&!bgImg){const v=ctx.createRadialGradient(W/2,H/2,H*.25,W/2,H/2,H*.75);v.addColorStop(0,'transparent');v.addColorStop(1,'rgba(0,0,0,.45)');ctx.fillStyle=v;ctx.fillRect(0,0,W,H);}
+ if(!L.wrapped.length){ctx.globalAlpha=.45;ctx.fillStyle=T.t;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='500 30px "Noto Serif Devanagari",serif';ctx.fillText('शायरी यहाँ दिखेगी',W/2,H/2);ctx.globalAlpha=1;return}
  ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`${L.size}px "${L.f}",serif`;
  let y=(H*.92-L.total)/2+L.lh/2;
  L.wrapped.forEach((lines,i)=>{
@@ -162,7 +162,7 @@ function draw(t){
 }
 async function ready(){const f=$('font').value;await Promise.all([document.fonts.load(`40px "${f}"`,'अआक'),document.fonts.load('500 30px "Noto Serif Devanagari"','अ')]).catch(()=>{});build()}
 async function run(rec){
- if(running)return;running=true;$('make').disabled=$('prev').disabled=true;$('out').innerHTML='';
+ if(running)return;if(!$('txt').value.trim()){$('status').textContent='Pehle shayari likho ya Nayi shayari dabao.';return}running=true;$('make').disabled=$('prev').disabled=true;$('out').innerHTML='';
  await ready();
  let recorder,chunks=[],mime='',ac,src;
  if(rec){
@@ -197,20 +197,36 @@ zindagi:[["ज़िंदगी हर मोड़ पर कुछ सिख�
 himmat:[["हार को भी हँसकर गले लगाना सीख,","ठोकरों से ही चलना आता है।","जो तूफ़ानों से डरकर रुक जाए,","वो कभी मंज़िल नहीं पाता है।"],["रास्ते मुश्किल हैं तो क्या हुआ,","हौसले भी तो कम नहीं हमारे।","एक दिन वक़्त भी झुक जाएगा,","जब चमकेंगे मेहनत के सितारे।"],["डर के आगे जो चल पड़ा,","वही तो सिकंदर कहलाया है।","गिरना कोई हार नहीं होती,","उठने वाले ने ही इतिहास बनाया है।"]]};
 const MOODN={pyaar:'pyaar (love)',judai:'judai aur dard (heartbreak)',dosti:'dosti (friendship)',zindagi:'zindagi (life)',himmat:'himmat aur motivation'};
 let lastIdx=-1;
-async function aiShayari(m){
- const p='Hindi (Devanagari script) me '+MOODN[m]+' par ek nayi original shayari likho: 4 chhoti lines, har line alag line me. Sirf shayari do, koi title, numbering ya explanation nahi. Variation '+Math.random();
+MOODN.attitude='attitude aur khudari (self-respect, confidence, bina badtameezi ke)';
+BANK.attitude=[["हम वो नहीं जो हर किसी के आगे झुक जाएँ,","अपनी ख़ुद्दारी हमारी सबसे बड़ी पहचान है।","जिसे हमारी क़दर नहीं, उसे हम भी भूल जाएँ,","हमारी मुस्कान में भी एक अलग शान है।"],["लोग क्या कहेंगे, ये सोचना छोड़ दिया,","अब हमने अपने दिल की सुननी शुरू की है।","जो साथ चले तो अपना, जो रुक गए तो ठीक,","हमने भी अपनी राह ख़ुद चुननी शुरू की है।"],["मेरा अंदाज़ अलग है, मेरी बात अलग है,","भीड़ में रहकर भी मेरी पहचान अलग है।","जो समझ गए वो साथ हैं हर हाल में,","जो न समझे उनके लिए मेरा नाम अलग है।"],["वक़्त बुरा है तो क्या, हौसला तो अपना है,","गिरकर उठना ही तो मेरा सपना है।","जिन्हें लगता है हम टूट जाएँगे,","उन्हें क्या पता, हर ज़ख़्म हमारा गहना है।"]];
+let SEEN=new Set();try{SEEN=new Set(JSON.parse(localStorage.getItem('sr_seen')||'[]'))}catch(e){}
+const saveSeen=()=>{try{localStorage.setItem('sr_seen',JSON.stringify([...SEEN].slice(-150)))}catch(e){}};
+const ANG={pyaar:['chaand','chai','muskaan','intezaar','baarish','nazar'],judai:['raat','aansu','yaadein','khamoshi','tanhai','khat'],dosti:['yaari','chai','safar','bachpan','mushkil waqt','bharosa'],zindagi:['waqt','aaina','safar','sukoon','raasta','umar'],himmat:['tufaan','manzil','pasina','girna','sapne','subah'],attitude:['tevar','khudari','izzat','akelapan','log kya kahenge','waqt']};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+async function aiShayari(m,n){
+ const p='Hindi (Devanagari script) me '+MOODN[m]+' par ek bilkul nayi original shayari likho: sirf '+n+' chhoti lines, har line alag line me. Is baar ka khayal: '+pick(ANG[m])+'. Sirf shayari do, koi title, numbering ya explanation nahi. Variation '+Math.random();
  const ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),12000);
  try{const r=await fetch('https://text.pollinations.ai/'+encodeURIComponent(p)+'?model=openai&seed='+Date.now(),{signal:ctl.signal});if(!r.ok)throw 0;
   const lines=(await r.text()).split('\n').map(s=>s.replace(/[*#>"\u201c\u201d]|^\s*[-\d.)]+\s+/g,'').trim()).filter(s=>s&&!/pollinations/i.test(s));
-  if(lines.length<2||!/[\u0900-\u097F]/.test(lines.join('')))throw 0;
-  return lines.slice(0,6).join('\n')}finally{clearTimeout(to)}
+  if(lines.length<Math.max(2,n-1)||!/[\u0900-\u097F]/.test(lines.join('')))throw 0;
+  return lines.slice(0,n).join('\n')}finally{clearTimeout(to)}
+}
+function bankPick(m,n){
+ const a=BANK[m];let c=a.map((_,i)=>i).filter(i=>!SEEN.has('B:'+m+i));
+ if(!c.length){a.forEach((_,i)=>SEEN.delete('B:'+m+i));c=a.map((_,i)=>i).filter(i=>i!==lastIdx);if(!c.length)c=[0]}
+ c=c.sort(()=>Math.random()-.5);
+ const seq=c.concat(a.map((_,i)=>i).filter(i=>!c.includes(i)));let out=[],first=true;
+ for(const i of seq){if(out.length>=n)break;out=out.concat(a[i]);SEEN.add('B:'+m+i);if(first){lastIdx=i;first=false}}
+ return out.slice(0,n).join('\n')
 }
 $('gen').onclick=async()=>{
- const m=$('mood').value,b=$('gen');b.disabled=true;let t='',ai=false;
- if($('useai').checked){$('status').textContent='AI shayari likh raha hai...';try{t=await aiShayari(m);ai=true}catch(e){}}
- if(!t){const a=BANK[m];let i;do{i=Math.floor(Math.random()*a.length)}while(a.length>1&&i===lastIdx);lastIdx=i;t=a[i].join('\n')}
+ const m=$('mood').value,n=+$('nl').value,b=$('gen');b.disabled=true;let t='',ai=false;
+ if($('useai').checked){$('status').textContent='AI nayi shayari likh raha hai...';
+  for(let k=0;k<2&&!t;k++){try{const x=await aiShayari(m,n);if(!SEEN.has(x)){t=x;ai=true}}catch(e){break}}}
+ if(!t)t=bankPick(m,n);else SEEN.add(t);
+ saveSeen();
  $('txt').value=t;$('txt').dispatchEvent(new Event('input'));
- $('status').textContent=ai?'AI ne nayi shayari likhi. Pasand na aaye to refresh dabao.':($('useai').checked?'AI nahi mila, tool ki apni shayari daali. Refresh dabao to doosri aayegi.':'Nayi shayari aa gayi. Refresh dabao to doosri aayegi.');
+ $('status').textContent=ai?'AI ne bilkul nayi shayari likhi. Pasand na aaye to refresh dabao.':'Tool ki apni shayari daali (ye limited hain, sab dikh jane par repeat hongi). AI se har baar nayi chahiye to "AI se likhwao" tick rakho aur internet chalu rakho.';
  b.disabled=false;
 };
 const TAGS={base:'#shayari #hindishayari #urdupoetry #poetry #reels #reelsinstagram #trendingreels #viralreels #explorepage #shayarilover',
@@ -224,6 +240,8 @@ judai:['Kuch baatein khamoshi hi samajh leti hai.','Yaadein jaati nahi, bas chup
 dosti:['Aise yaar kismat se milte hain.','Apne us dost ko tag karo jo sab kuch samajhta hai.','Dosti ka koi hisaab nahi hota.'],
 zindagi:['Zindagi har mod par kuch sikha jaati hai.','Thoda ruko, khud se bhi mil lo.','Jo sach laga, wahi likh diya.'],
 himmat:['Girna haar nahi hai, uthna asli jeet hai.','Hausla rakho, raaste khud ban jayenge.','Ye line un sabke liye jo haar nahi maante.']};
+TAGS.attitude='#attitudeshayari #attitude #khudari #hindiquotes #selfrespect #swag';
+CAPS.attitude=['Jo samjhe unke liye, jo na samjhe unke liye bhi.','Attitude nahi, ye meri khudari hai.','Apna andaaz, apni baat.'];
 async function aiCaption(txt){
  const p='Neeche di gayi Hindi shayari ke liye Instagram reel caption aur hashtags likho. Format: pehli line me ek relatable sawal jo shayari ke ehsaas se juda ho (Hinglish, max 15 words), phir ek line me comment karne ki request (jaise "haan" likho ya kisi ko tag karo), phir ek line me follow karne ki request jisme @itz__writer ka naam ho, phir ek khali line, phir sirf 5 relevant hashtags ek hi line me (3 niche, 2 broad). Koi explanation ya title nahi.\n\nShayari:\n'+txt;
  const ctl=new AbortController(),to=setTimeout(()=>ctl.abort(),12000);
